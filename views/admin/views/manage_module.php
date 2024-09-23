@@ -2,18 +2,12 @@
 
 include '../../../app/db.php';
 include '../../../app/url.php';
+include '../../../controller/includes/read_modules.php';
 
 session_start();
 
 $user = isset($_SESSION['admin_id']) ? $_SESSION['admin_id'] : 'Guest';
 $name = isset($_SESSION['admin_name']) ? $_SESSION['admin_name'] : 'Guest';
-
-$query = "SELECT * FROM data_module";
-$result = $conn->query($query);
-
-if (!$result) {
-    die("Error querying database: " . $conn->error);
-}
 
 ?>
 
@@ -128,7 +122,7 @@ if (!$result) {
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="vadd_module.php">
+                                        <a href="add_module.php">
                                             <span class="sub-item">Add Module</span>
                                         </a>
                                     </li>
@@ -549,44 +543,62 @@ if (!$result) {
                                         <tfoot>
                                             <tr>
                                                 <th>Name</th>
-                                                <th>Position</th>
-                                                <th>Office</th>
-                                                <th>Age</th>
-                                                <th>Start date</th>
-                                                <th>Salary</th>
+                                                <th>Level</th>
+                                                <th>Category</th>
+                                                <th>Uploader</th>
+                                                <th>Upload date</th>
+                                                <th>Path</th>
                                             </tr>
                                         </tfoot>
                                         <tbody>
-                                            <tr>
-                                                <td>Tiger Nixon</td>
-                                                <td>System Architect</td>
-                                                <td>Edinburgh</td>
-                                                <td>61</td>
-                                                <td>2011/04/25</td>
-                                                <td>$320,800</td>
-                                                <td>
-                                                    <div class="form-button-action">
-                                                        <button
-                                                            type="button"
-                                                            data-bs-toggle="tooltip"
-                                                            title=""
-                                                            class="btn btn-link btn-primary btn-lg"
-                                                            id="edit-action"
-                                                            data-original-title="Edit Task">
-                                                            <i class="fa fa-edit"></i>
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            data-bs-toggle="tooltip"
-                                                            title=""
-                                                            class="btn btn-link btn-danger"
-                                                            id="delete-action"
-                                                            data-original-title="Remove">
-                                                            <i class="fa fa-times"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
+
+                                            <?php
+
+                                            if ($result) {
+
+                                                while ($module = $result->fetch_assoc()) {
+
+                                                    // foreach ($result as $module) {
+
+                                                    $moduleID = htmlspecialchars($module['id']);
+                                                    $moduleName = htmlspecialchars($module['name']);
+                                                    $moduleLevel = htmlspecialchars($module['level']);
+                                                    $moduleCategory = htmlspecialchars($module['category']);
+                                                    $moduleUploader = htmlspecialchars($module['uploader']);
+                                                    $moduleUploadDate = htmlspecialchars($module['created']);
+                                                    $moduleFilePath = htmlspecialchars($module['module_path']);
+
+                                                    echo '<tr>';
+
+                                                    echo  '<td>' . $moduleName . '</td>';
+                                                    echo  '<td>' . $moduleLevel . '</td>';
+                                                    echo  '<td>' . $moduleCategory . '</td>';
+                                                    echo  '<td>' . $moduleUploader . '</td>';
+                                                    echo  '<td>' . date('Y-m-d', strtotime($moduleUploadDate)) . '</td>';
+                                                    echo  '<td>' . $moduleFilePath . '</td>';
+
+                                                    echo   '<td>
+                                                            <div class="form-button-action">
+                                                                <button type="button" class="btn btn-link btn-primary btn-lg edit-action"
+                                                                    data-id="' . $moduleID . '"
+                                                                    data-name="' . $moduleName . '"
+                                                                    data-category="' . $moduleCategory . '"
+                                                                    data-uploader="' . $moduleUploader . '"
+                                                                    data-bs-toggle="tooltip"
+                                                                    title="Edit Module">
+                                                                    <i class="fa fa-edit"></i>
+                                                                </button>
+                                                                <button type="button" class="btn btn-link btn-danger delete-action"
+                                                                    data-id="' . $moduleID . '"
+                                                                    data-bs-toggle="tooltip"
+                                                                    title="Remove Module">
+                                                                    <i class="fa fa-times"></i>
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>';
+                                                }
+                                            } ?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -671,76 +683,103 @@ if (!$result) {
                         });
                 },
             });
-            $("#delete-action").click(function() {
-                Swal.fire({
-                    title: "Are you sure?",
-                    text: "You will not be able to recover this module!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: "Yes, delete it!",
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // delete action here
-                        $.ajax({
-                            url: "<?php echo BASE_URL; ?>controller/admin/managemoduleConfig.php",
-                            type: "POST",
-                            data: {
-                                action: "delete",
-                                delete_module: result.value,
-                                oke: 'oke'
-                            },
-                            success: function(response) {
-                                Swal.fire("Updated!", "Your module has been updated.", "success");
-                                console.log('deleted ' + response);
-                            },
-                            error: function(error) {
-                                console.log(error);
-                            }
-                        });
-                    }
-                });
+            // $("#delete-action").click(function() {
+            //     Swal.fire({
+            //         title: "Are you sure?",
+            //         text: "You will not be able to recover this module!",
+            //         icon: "warning",
+            //         showCancelButton: true,
+            //         confirmButtonColor: "#3085d6",
+            //         cancelButtonColor: "#d33",
+            //         confirmButtonText: "Yes, delete it!",
+            //     }).then((result) => {
+            //         if (result.isConfirmed) {
+            //             // delete action here
+            //             $.ajax({
+            //                 url: "<?php echo BASE_URL; ?>controller/admin/managemoduleConfig.php",
+            //                 type: "POST",
+            //                 data: {
+            //                     action: "delete",
+            //                     delete_module: result.value,
+            //                     oke: 'oke'
+            //                 },
+            //                 success: function(response) {
+            //                     Swal.fire("Updated!", "Your module has been updated.", "success");
+            //                     console.log('deleted ' + response);
+            //                 },
+            //                 error: function(error) {
+            //                     console.log(error);
+            //                 }
+            //             });
+            //         }
+            //     });
+            // });
+            $(document).on('click', '.delete-action', function() {
+                var moduleID = $(this).data('id'); 
+
             });
-            $("#edit-action").click(function() {
+            $(document).on('click', '.edit-action', function() {
+
+                var moduleID = $(this).data('id');
+                var moduleName = $(this).data('name'); 
+                var moduleCategory = $(this).data('category');
+                var moduleUploader = $(this).data('uploader');
+
                 Swal.fire({
-                    title: "Edit Module",
-                    input: "text",
-                    inputPlaceholder: "Enter module name",
+                    title: 'Edit Module',
+                    html:
+                            
+                            '<label for="nama-module" class="text-start d-block">Module Name</label>' +
+                            '<input type="text" class="form-control mb-3" id="nama-module" name="nama-module" placeholder="' + moduleName +'">'+
+                            '<span></span>'+
+                            '<label for="nama-module" class="text-start d-block">Module Uploader</label>' +
+                            '<input type="text" class="form-control mb-3" id="nama-module" name="nama-module" placeholder="' + moduleUploader +'">',
+                            
                     showCancelButton: true,
-                    confirmButtonText: "Update",
-                    showLoaderOnConfirm: true,
-                    preConfirm: function(input) {
-                        return new Promise(function(resolve, reject) {
-                            setTimeout(function() {
-                                if (input === "") {
-                                    reject("Module name is required!");
-                                } else {
-                                    resolve();
-                                }
-                            }, 2000);
-                        });
-                    },
-                    allowOutsideClick: false,
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "<?php echo BASE_URL; ?>controller/admin/managemoduleConfig.php",
-                            type: "POST",
-                            data: {
-                                update_module: result.value
-                            },
-                            success: function(response) {
-                                Swal.fire("Updated!", "Your module has been updated.", "success");
-                                console.log('updated ' + response);
-                            },
-                            error: function(error) {
-                                console.log(error);
-                            }
-                        });
-                    }
-                });
-            });
+                    confirmButtonText: "Update"
+                })
+
+             }); // Ambil kategori modul dari data-category
+
+            // $("#edit-action").click(function() {
+            //     Swal.fire({
+            //         title: "Edit Module",
+            //         input: "text",
+            //         inputPlaceholder: "Enter module name",
+            //         showCancelButton: true,
+            //         confirmButtonText: "Update",
+            //         showLoaderOnConfirm: true,
+            //         preConfirm: function(input) {
+            //             return new Promise(function(resolve, reject) {
+            //                 setTimeout(function() {
+            //                     if (input === "") {
+            //                         reject("Module name is required!");
+            //                     } else {
+            //                         resolve();
+            //                     }
+            //                 }, 2000);
+            //             });
+            //         },
+            //         allowOutsideClick: false,
+            //     }).then((result) => {
+            //         if (result.isConfirmed) {
+            //             $.ajax({
+            //                 url: "<?php echo BASE_URL; ?>controller/admin/managemoduleConfig.php",
+            //                 type: "POST",
+            //                 data: {
+            //                     update_module: result.value
+            //                 },
+            //                 success: function(response) {
+            //                     Swal.fire("Updated!", "Your module has been updated.", "success");
+            //                     console.log('updated ' + response);
+            //                 },
+            //                 error: function(error) {
+            //                     console.log(error);
+            //                 }
+            //             });
+            //         }
+            //     });
+            // });
         });
     </script>
 </body>

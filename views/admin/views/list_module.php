@@ -2,18 +2,13 @@
 
 include '../../../app/db.php';
 include '../../../app/url.php';
+include '../../../controller/includes/read_modules.php';
 
 session_start();
 
 $user = isset($_SESSION['admin_id']) ? $_SESSION['admin_id'] : 'Guest';
 $name = isset($_SESSION['admin_name']) ? $_SESSION['admin_name'] : 'Guest';
 
-$query = "SELECT * FROM data_module";
-$result = $conn->query($query);
-
-if (!$result) {
-    die("Error querying database: " . $conn->error);
-}
 
 ?>
 
@@ -543,7 +538,6 @@ if (!$result) {
                                 <div class="card-body">
                                     <div class="row">
                                         <?php
-
                                         if ($result) {
                                             // Flag untuk mengecek apakah ada data
                                             $hasModules = false;

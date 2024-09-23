@@ -3,37 +3,52 @@
 include __DIR__ . '/../../app/db.php';
 include __DIR__ . '/../../app/url.php';
 
-if (isset($_POST['submit-module'])) {
-
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Mengambil data dari FormData
     $module_name = $_POST['nama-module'];
+    $module_category = $_POST['category-module'];
     $module_level = $_POST['level-module'];
     $module_uploader = $_POST['uploader'];
     $module_description = $_POST['description'];
 
-    // Upload file dan dapatkan path
-    $uploadResult = uploadFile();
+    // Mendapatkan data selectedUser dari POST
+    $reciever_id_json = $_POST['selectedUser'];
 
-    if ($uploadResult['status']) {
-        $pdfPath = $uploadResult['pdf'];
-        $thumbnailPath = $uploadResult['thumbnail'];
+    // Mengubah JSON menjadi array
+    $reciever_id = json_decode($reciever_id_json, true); // true untuk array asosiatif
 
-        // Query untuk menyimpan ke database
-        $query = "INSERT INTO data_module (name, category, uploader, module_path, thumbnail_path, `desc`) 
-        VALUES ('$module_name', '$module_level', '$module_uploader', '$pdfPath', '$thumbnailPath', '$module_description')";
+    if (is_array($reciever_id)) {
+        // Jika valid, encode kembali untuk disimpan di database
+        //$reciever_id_json = json_encode($reciever_id);
+        $reciever_id_string = implode(',', $reciever_id);
 
-        $result = $conn->query($query);
+        // Upload file dan dapatkan path
+        $uploadResult = uploadFile();
 
-        if ($result) {
-            echo "Module uploaded successfully!";
-            header("Location: " . BASE_URL);
-            exit();
+        if ($uploadResult['status']) {
+            $pdfPath = $uploadResult['pdf'];
+            $thumbnailPath = $uploadResult['thumbnail'];
+
+            // Query untuk menyimpan ke database
+            $query = "INSERT INTO data_module (name, level, category, uploader, module_path, thumbnail_path, `desc`, reciever_id) 
+            VALUES ('$module_name', '$module_level', '$module_category', '$module_uploader', '$pdfPath', '$thumbnailPath', '$module_description', '$reciever_id_string')";
+
+            $result = $conn->query($query);
+
+            if ($result) {
+                echo json_encode(['status' => 'success', 'message' => 'Module uploaded successfully!']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Database error: ' . $conn->error]);
+            }
         } else {
-            die("Error: " . $conn->error);
+            echo json_encode(['status' => 'error', 'message' => 'Error uploading files.']);
         }
     } else {
-        echo "Error uploading files.";
+        echo json_encode(['status' => 'error', 'message' => 'Invalid receiver selection.']);
     }
     $conn->close();
+} else {
+    echo json_encode(['status' => 'error', 'message' => 'Invalid request method.']);
 }
 
 function uploadFile()

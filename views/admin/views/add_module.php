@@ -55,8 +55,7 @@ $name = isset($_SESSION['admin_name']) ? $_SESSION['admin_name'] : 'Guest';
     <link rel="stylesheet" href="../../../assets/css/plugins.min.css" />
     <link rel="stylesheet" href="../../../assets/css/kaiadmin.min.css" />
 
-    <!-- CSS Just for demo purpose, don't include it in your project -->
-    <!-- <link rel="stylesheet" href="assets/css/demo.css" /> -->
+    <link href="../../../assets/css/MagicSuggest/magicsuggest.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -500,7 +499,7 @@ $name = isset($_SESSION['admin_name']) ? $_SESSION['admin_name'] : 'Guest';
                                             <div class="dropdown-divider"></div>
                                             <a class="dropdown-item" href="#">Account Setting</a>
                                             <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="<?php echo BASE_URL; ?>controller/public/login.php?action=logout">Logout</a>
+                                            <a class="dropdown-item" href="<?php echo BASE_URL; ?>controller/includes/login.php?action=logout">Logout</a>
                                         </li>
                                     </div>
                                 </ul>
@@ -511,7 +510,6 @@ $name = isset($_SESSION['admin_name']) ? $_SESSION['admin_name'] : 'Guest';
                 <!-- End Navbar -->
             </div>
             <div class="container">
-
                 <div class="page-inner">
                     <div class="row">
                         <div class="col-md-12">
@@ -520,26 +518,39 @@ $name = isset($_SESSION['admin_name']) ? $_SESSION['admin_name'] : 'Guest';
                                     <h4 class="card-title">Add Module to Dashboard</h4>
                                 </div>
                                 <div class="card-body">
-                                    <form action="<?php echo BASE_URL; ?>controller/admin/addmoduleConfig.php" method="post" enctype="multipart/form-data"> <!-- Pastikan mendukung file upload -->
-                                        <!-- Module Name -->
+                                    <form action="<?php echo BASE_URL; ?>controller/admin/addmoduleConfig.php" method="post" id="addModule" enctype="multipart/form-data"> <!-- Pastikan mendukung file upload -->
+                                        
                                         <div class="form-group">
                                             <label for="nama-module">Module Name</label>
                                             <input type="text" class="form-control" id="nama-module" name="nama-module" placeholder="Enter module name" required>
                                         </div>
 
-                                        <!-- Thumbnail Upload -->
+                                       
                                         <div class="form-group">
                                             <label for="thumbnail">Thumbnail</label>
                                             <div class="custom-file">
-                                                <input type="file" name="thumbnail" class="form-control-file" id="thumbnail" accept="image/*" required />
+                                                <input type="file" name="thumbnail" class="form-control" id="thumbnail" accept="image/*" required />
                                             </div>
                                         </div>
 
-                                        <!-- Level -->
+                                       
+                                        <div class="form-group">
+                                            <label for="level-module">Category</label>
+                                            <select class="form-control" id="category-module" name="category-module" required>
+                                                <option value="" disabled selected>Select category</option> 
+                                                <option value="mobile">Mobile App Programming</option>
+                                                <option value="web">Web App Programming</option>
+                                                <option value="iot">Internet of Things</option>
+                                                <option value="networking">Networking</option>
+                                                <option value="other">Other</option>
+                                            </select>
+                                        </div>
+
+                                       
                                         <div class="form-group">
                                             <label for="level-module">Level</label>
                                             <select class="form-control" id="level-module" name="level-module" required>
-                                                <option value="" disabled selected>Select level</option> <!-- Default empty option -->
+                                                <option value="" disabled selected>Select level</option> 
                                                 <option value="beginner">Beginner</option>
                                                 <option value="intermediate">Intermediate</option>
                                                 <option value="advanced">Advanced</option>
@@ -547,27 +558,32 @@ $name = isset($_SESSION['admin_name']) ? $_SESSION['admin_name'] : 'Guest';
                                             </select>
                                         </div>
 
-                                        <!-- Uploaded By -->
+                                        
                                         <div class="form-group">
                                             <label for="uploader">Uploaded By</label>
                                             <input type="text" class="form-control" id="uploader" name="uploader" placeholder="Enter uploader's name" required>
                                         </div>
 
-                                        <!-- Description -->
+                                       
                                         <div class="form-group">
                                             <label for="description">Description</label>
                                             <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter module description" required></textarea>
                                         </div>
 
-                                        <!-- File Upload (PDF only) -->
+                                        
                                         <div class="form-group">
                                             <label for="file">File</label>
                                             <div class="custom-file">
-                                                <input type="file" class="custom-file-input" id="file" name="file" accept="application/pdf" required>
+                                                <input type="file" class="form-control" id="file" name="file" accept="application/pdf" required>
                                             </div>
                                         </div>
 
-                                        <!-- Submit Button -->
+                                        <div class="form-group">
+                                            <label for="recieverTag">Reciever</label>
+                                            <div id="recieverTag" class="form-control"></div>
+                                        </div>
+
+                                        
                                         <div class="form-group">
                                             <button type="submit" class="btn btn-primary btn-block" name="submit-module" id="submit-module" value="submit-module">Submit</button>
                                         </div>
@@ -578,13 +594,20 @@ $name = isset($_SESSION['admin_name']) ? $_SESSION['admin_name'] : 'Guest';
                     </div>
                 </div>
             </div>
+
         </div>
+
     </div>
+
+
 
     <!--   Core JS Files   -->
     <script src="../../../assets/js/core/jquery-3.7.1.min.js"></script>
     <script src="../../../assets/js/core/popper.min.js"></script>
     <script src="../../../assets/js/core/bootstrap.min.js"></script>
+    <script src="../../../assets/css/MagicSuggest/magicsuggest.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- jQuery Scrollbar -->
     <script src="../../../assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
@@ -618,31 +641,70 @@ $name = isset($_SESSION['admin_name']) ? $_SESSION['admin_name'] : 'Guest';
     <!-- <script src="assets/js/setting-demo.js"></script>
     <script src="assets/js/demo.js"></script> -->
     <script>
-        $("#lineChart").sparkline([102, 109, 120, 99, 110, 105, 115], {
-            type: "line",
-            height: "70",
-            width: "100%",
-            lineWidth: "2",
-            lineColor: "#177dff",
-            fillColor: "rgba(23, 125, 255, 0.14)",
+        $(function() {
+            $.ajax({
+                url: '/module-dashboard/controller/includes/read_user.php',
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    var recieverTag = $('#recieverTag').magicSuggest({
+                        valueField: 'id',
+                        data: response,
+                        renderer: function(data) {
+                            return '<div style="padding: 5px; overflow:hidden;">' +
+                                '<div style="float: left; margin-left: 5px">' +
+                                '<div style="font-weight: bold; color: #333; font-size: 15px; line-height: 12px">' + data.name + '</div>' +
+                                '<div style="color: #999; font-size: 11px">' + data.email + '</div>' +
+                                '</div>' +
+                                '</div><div style="clear:both;"></div>'; // make sure we have closed our dom stuff
+                        }
+                    });
+                    $(recieverTag).on('selectionchange', function(e, cb, s) {
+                        //console.log(cb.getValue());
+                        // send the selected value to storage
+                        localStorage.setItem('selectedUser', JSON.stringify(cb.getValue()));
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.log(xhr.responseText);
+                }
+            })
         });
+        $('#addModule').on('submit', function(e) {
+            e.preventDefault();
 
-        $("#lineChart2").sparkline([99, 125, 122, 105, 110, 124, 115], {
-            type: "line",
-            height: "70",
-            width: "100%",
-            lineWidth: "2",
-            lineColor: "#f3545d",
-            fillColor: "rgba(243, 84, 93, .14)",
-        });
+            var selectedUser = JSON.parse(localStorage.getItem('selectedUser'));
+            //console.log(selectedUser);
 
-        $("#lineChart3").sparkline([105, 103, 123, 100, 95, 105, 115], {
-            type: "line",
-            height: "70",
-            width: "100%",
-            lineWidth: "2",
-            lineColor: "#ffa534",
-            fillColor: "rgba(255, 165, 52, .14)",
+            var formData = new FormData(this);
+
+            if (selectedUser) {
+                formData.append('selectedUser', JSON.stringify(selectedUser)); // Tambahkan selectedUser ke POST data
+            }
+
+            //console.log(formData);
+
+            // Ajax POST
+            $.ajax({
+                url: '/module-dashboard/controller/admin/addmoduleConfig.php',
+                type: 'POST',
+                data: formData, // Gunakan formData untuk mengirim semua data termasuk file
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    var result = JSON.parse(response);
+                    if (result.status === 'success') {
+                        Swal.fire("Added!", result.message, "success");
+                        $('#addModule')[0].reset();
+                        localStorage.removeItem('selectedUser');
+                    } else {
+                        Swal.fire("Error!", result.message, "error");
+                    }
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
         });
     </script>
 </body>

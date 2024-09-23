@@ -17,7 +17,7 @@ h1 {
 
 .login-container {
     width: 100%;
-    max-width: 400px;
+    max-width: 600px;
     margin: 0 auto;
     background-color: #f5f0f0;
     padding: 30px 20px;
@@ -30,23 +30,18 @@ h1 {
 
 form {
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     font-size: 1rem;
     box-sizing: border-box;
-    transition: border-color 0.3s ease;
 }
 
 input {
     width: 100%;
-    padding: 12px;
-    margin-bottom: 20px;
+    padding: 8px; /* Reduce padding for smaller input */
+    margin-bottom: 20px; /* Adjust margin for more compact form */
     border: 1px solid #ccc;
-    border-radius: 15px;
-    text-align: center;
-    font-size: 1rem;
-    box-sizing: border-box;
+    border-radius: 25px; /* Increase border-radius for more rounded inputs */
+    text-align: left;
+    font-size: 0.9rem; /* Slightly smaller font size */
     transition: border-color 0.3s ease;
 }
 
@@ -54,6 +49,7 @@ input:focus {
     border-color: #1089b9;
     outline: none;
 }
+
 
 .button-submit {
     width: 100%;
@@ -65,7 +61,6 @@ input:focus {
     cursor: pointer;
     transition: background-color 0.3s ease-in-out, transform 0.3s ease;
     font-size: 1rem;
-    box-sizing: border-box;
 }
 
 .button-submit:hover {
@@ -75,9 +70,7 @@ input:focus {
 
 .button-submit:active {
     background-color: #085e89;
-    transform: translateY(0);
 }
-
 
 .login-container p {
     text-align: center;
@@ -95,3 +88,11 @@ input:focus {
     text-decoration: underline;
 }
 
+#alert-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    max-width: 90vw;
+    width: auto;
+}

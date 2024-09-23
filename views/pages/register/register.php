@@ -10,9 +10,9 @@ include '../../../app/url.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL; ?>assets/css/register.css">
-</head>
+     <link rel="stylesheet" type="text/css" href="<?php echo BASE_URL; ?>assets/css/register.css">
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    </head>
 
 <body>
 
@@ -22,9 +22,9 @@ include '../../../app/url.php';
     </div>
 
     <div class="login-container">
-        <!-- <h1>Register</h1>
+        <h1>Register</h1>
 
-        <form action="<?php echo BASE_URL; ?>controller/includes/login.php" method="post">
+        <!-- <form>
             <input type="email" id="email" name="email" placeholder="Email" required>
             <input type="text" id="username" name="username" placeholder="Username" required>
             <input type="password" id="password" name="password" placeholder="Password" minlength="8" required>
@@ -33,37 +33,22 @@ include '../../../app/url.php';
         <p>Sudah punya akun? <a href="../login/login.php">Login</a></p>
     </div> -->
 
-        <form class="row g-3">
+        <form class="row g-3" action="<?php echo BASE_URL; ?>controller/includes/login.php" method="post">
             <div class="col-12">
-                <label for="inputAddress" class="form-label">Username</label>
-                <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
             </div>
             <div class="col-md-6">
                 <label for="inputEmail4" class="form-label">Email</label>
-                <input type="email" class="form-control" id="inputEmail4">
+                <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
             </div>
             <div class="col-md-6">
                 <label for="inputPassword4" class="form-label">Password</label>
-                <input type="password" class="form-control" id="inputPassword4">
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password" minlength="8" required>
             </div>
             <div class="col-12">
-                <label for="inputAddress2" class="form-label">Address 2</label>
-                <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor">
-            </div>
-            <div class="col-md-6">
-                <label for="inputCity" class="form-label">City</label>
-                <input type="text" class="form-control" id="inputCity">
-            </div>
-            <div class="col-md-4">
-                <label for="inputState" class="form-label">State</label>
-                <select id="inputState" class="form-select">
-                    <option selected>Choose...</option>
-                    <option>...</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <label for="inputZip" class="form-label">Zip</label>
-                <input type="text" class="form-control" id="inputZip">
+                <label for="address" class="form-label">Address</label>
+                <input type="text" class="form-control" id="address" name="address" placeholder="Street, City, Apartment, studio, or floor" required>
             </div>
             <div class="col-12">
                 <div class="form-check">
@@ -74,7 +59,7 @@ include '../../../app/url.php';
                 </div>
             </div>
             <div class="d-grid col-11 gap-2 mx-auto">
-                <button type="submit" class="btn btn-primary">Sign in</button>
+                <button type="submit" class="button-submit" name="register">Sign Up</button>
             </div>
             <div class="container">
                 <div class="row justify-content-md-center">
@@ -82,6 +67,7 @@ include '../../../app/url.php';
                         <p>
                             <a href="../login/login.php">Sudah punya akun? Login</a>
                         </p>
+                        
                     </div>
                 </div>
             </div>
@@ -107,6 +93,22 @@ include '../../../app/url.php';
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                           </div>`;
 
+            // Insert the alert into the alert container
+            document.getElementById('alert-container').innerHTML = alert;
+
+            // Auto-dismiss the alert after 5 seconds
+            setTimeout(() => {
+                const alertElem = document.querySelector('.alert');
+                if (alertElem) {
+                    alertElem.classList.remove('show');
+                }
+            }, 5000);
+        } else if (urlParams.get('status') === 'exist') {
+            // Create an alert div
+            const alert = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            Gagal melakukan registrasi, Email tersebut sudah terdaftar. Silahkan coba lagi.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                          </div>`;
             // Insert the alert into the alert container
             document.getElementById('alert-container').innerHTML = alert;
 
